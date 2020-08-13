@@ -12,14 +12,14 @@ require('firebase/firestore');
 
 //TODO: do not deploy with api key exposed!
 firebase.initializeApp({
-  apiKey: "AIzaSyDy74PfDOOy0D5QuMd6VGPWgpKhMigwgXE",
-    authDomain: "chatty-app-293a6.firebaseapp.com",
-    databaseURL: "https://chatty-app-293a6.firebaseio.com",
-    projectId: "chatty-app-293a6",
-    storageBucket: "chatty-app-293a6.appspot.com",
-    messagingSenderId: "1072748362956",
-    appId: "1:1072748362956:web:58523a6d89fa050a8f1669",
-    measurementId: "G-S8G3QL4FRH"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+    authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN ,
+    databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL ,
+    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID ,
+    storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET ,
+    messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID ,
+    appId: process.env.REACT_APP_APP_ID ,
+    measurementId: process.env.REACT_APP_MEASUREMENT_ID 
 });
 
 const routing = (

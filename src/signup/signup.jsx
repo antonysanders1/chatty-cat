@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {Link} from 'react-router-dom';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
@@ -11,6 +12,17 @@ import styles from './styles';
 const firebase = require('firebase');
 
 class SignUp extends Component {
+
+    constructor(){
+        super()
+        this.state = {
+            email: null,
+            username: null,
+            password: null,
+            passwordConfirm: null,
+            signUpError: ''
+        }
+    }
 
     render(){
 
@@ -50,19 +62,75 @@ class SignUp extends Component {
 
                         <Button type='submit' fullWidth variant='contained' color='secondary'
                         className={classes.submit}>SUBMIT</Button>
+                    </form><br/>
 
-                    </form>
+                    {this.state.signUpError ?
+                    <Typography className={classes.errorText} component='h5' varient='h6' >{this.state.signUpError}</Typography> :
+                    null
+                    }
+
+                    <Typography component="h5" varient='h6' className={classes.hasAccountHeader}>Already have an account?</Typography>
+                    <Link className={classes.loginInLink} to='/login'>Log In!</Link>
                 </Paper>
             </main>
         );
     }
 
-    handleSignup = (e) => {
-        console.log('Submitting!')
-    }
     handleChange = (type, e) => {
-        console.log(type, e)
+        switch (type) {
+            case 'email':
+                this.setState({
+                    email: e.target.value
+                })
+                break;
+            case 'username':
+            this.setState({
+                username: e.target.value
+            })
+            break;
+            case 'password':
+            this.setState({
+                password: e.target.value
+            })
+            break;
+            case 'passwordConfirm':
+            this.setState({
+                passwordConfirm: e.target.value
+            })
+            break;
+            default:
+                break;
+        }
     }
+    handleSignup = (e) => {
+        e.preventDefault();
+
+        if(!this.formIsValid()) {
+            this.setState({signUpError: 'Passwords do not match!'})
+            return;
+        }
+
+        firebase.auth()
+        .createUserWithEmailAndPassword(this.state.email, this.state.password)
+        .then(authRes => {
+            const userObj = {
+                email: authRes.user.email
+            };
+            firebase.firestore().collection('users')
+            .doc(this.state.username)
+            .set(userObj).then(() => {this.props.history.push('/dashboard')
+        }, dbError => {
+            console.log(dbError);
+            this.setState({signUpError: 'Failed to add user'})
+        })
+        }, authError =>{
+            console.log(authError);
+            this.setState({signUpError: 'Failed to add user'})
+        })
+
+    }
+
+    formIsValid = () => this.state.password === this.state.passwordConfirm;
 
 }
 
